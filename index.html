@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>HAR Kebap QR Menü</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family:sans-serif; background:#fff; color:#222; margin:0; }
+    .container { max-width:420px; margin:0 auto; padding:24px 12px 48px; }
+    h1 { font-size:2em; margin-bottom:8px; }
+    .search { width:100%; padding:8px; margin:8px 0 16px; border:1px solid #ccc; border-radius:6px; }
+    .cat-title { font-weight:bold; font-size:1.2em; border-bottom:2px solid #eee; margin-bottom:10px; padding-bottom:2px;}
+    .item-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #eee; }
+    .item-name { font-weight:500; }
+    .item-price { font-weight:700; }
+    .footer { color:#777; font-size:12px; margin-top:36px; text-align:center;}
+    @media (max-width:480px){ .container{padding:8px;} }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>HAR KEBAP</h1>
+  <div style="color:#999;margin-bottom:4px;">QR Menü (canlı güncellenir)</div>
+  <input class="search" id="search" placeholder="Ara...">
+  <div class="cat">
+    <div class="cat-title">Menü</div>
+    <div id="menu"></div>
+  </div>
+  <div class="footer">
+    Menü <a href="https://docs.google.com/spreadsheets/d/1H7cTTOTSVEIeBn_ZX-EB8GdSgOVsnF86nSap4Wy2pOA/edit" target="_blank">buradan</a> güncellenir.<br>
+    Powered by Google Sheets
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPkJMcNiX4vbDtgzfIFNmMN4hH7w1guBDJPOzbIuj9qdJhmWuPCdnoWeHAroLB_m-LtdDbYjTJ-gmM/pub?gid=0&single=true&output=csv";
+
+function renderMenu(data){
+  const search = (document.getElementById("search").value||"").toLowerCase();
+  const menu = document.getElementById("menu");
+  menu.innerHTML = "";
+  data.forEach(row=>{
+    const name = row.TITLE || row.Title || row.TITLE;
+    const price = row.PRICE || row.Price || row.PRICE;
+    const currency = row.CURRENCY || row.Currency || row.CURRENCY;
+    if(name.toLowerCase().includes(search)){
+      menu.innerHTML += `
+        <div class="item-row">
+          <span class="item-name">${name}</span>
+          <span class="item-price">${price} ${currency}</span>
+        </div>`;
+    }
+  });
+}
+
+function loadMenu(){
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    complete: function(results){
+      renderMenu(results.data.filter(r=>Object.values(r).some(v=>v !== "")));
+    }
+  });
+}
+
+document.getElementById("search").oninput = loadMenu;
+loadMenu();
+</script>
+</body>
+</html>
