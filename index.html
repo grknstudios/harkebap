@@ -33,10 +33,10 @@
 <body>
 <div class="container">
 
-  <!-- LOGO EKLEMEK İÇİN: src="" kısmına logonun bağlantısını koy veya dosya adını yaz -->
+  <!-- LOGO EKLEMEK İÇİN src kısmını değiştirmen yeterli -->
   <div class="logo-box">
-  <img id="logo" src="harkebap_logo.png" alt="HAR KEBAP logo">
-</div>
+    <img id="logo" src="harkebap_logo.png" alt="HAR KEBAP logo">
+  </div>
 
   <h1>HAR KEBAP</h1>
   <div class="subtitle">QR Menü (canlı güncellenir)</div>
@@ -71,9 +71,8 @@
   </div>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPkJMcNiX4vbDtgzfIFNmMN4hH7w1guBDJPOzbIuj9qdJhmWuPCdnoWeHAroLB_m-LtdDbYjTJ-gmM/pub?gid=0&single=true&output=csv";
+const API_URL = "https://script.google.com/macros/s/AKfycbxWoKKilCgwHv6GGAwCWLMjoMO4gFFaaPEYhhhXlUg7V78vV2YNk358SjOSkJcRtVPt/exec";
 
 function renderMenu(data){
   const search = (document.getElementById("search").value||"").toLowerCase();
@@ -93,13 +92,9 @@ function renderMenu(data){
   });
 }
 function loadMenu(){
-  Papa.parse(CSV_URL, {
-    download: true,
-    header: true,
-    complete: function(results){
-      renderMenu(results.data.filter(r=>Object.values(r).some(v=>v !== "")));
-    }
-  });
+  fetch(API_URL)
+    .then(r=>r.json())
+    .then(data=>renderMenu(data));
 }
 document.getElementById("search").oninput = loadMenu;
 loadMenu();
