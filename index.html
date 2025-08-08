@@ -27,6 +27,7 @@
     .social-links a:hover { opacity:.82;}
     .address { margin:11px 0 0 0; font-size:0.98em;}
     .tel { color:#ea8500; font-weight:700; font-size:1.07em;}
+    #loader {display:none; text-align:center; margin:28px 0 18px;}
     @media (max-width:520px){ .container{padding:9px;} .contacts{padding:14px 5px 4px 8px;} #logo{width:64px;height:64px;} }
   </style>
 </head>
@@ -39,9 +40,22 @@
   </div>
 
   <h1>HAR KEBAP</h1>
-  <div class="subtitle">QR Menü</div>
+  <div class="subtitle">QR Menü (canlı güncellenir)</div>
 
   <input class="search" id="search" placeholder="Ara...">
+
+  <!-- Loader Eklendi -->
+  <div id="loader">
+    <svg width="38" height="38" viewBox="0 0 38 38">
+      <circle cx="19" cy="19" r="16" stroke="#ea8500" stroke-width="4" fill="none" opacity="0.25"/>
+      <circle cx="19" cy="19" r="16" stroke="#ea8500" stroke-width="4" fill="none"
+        stroke-dasharray="80"
+        stroke-dashoffset="60">
+        <animateTransform attributeName="transform" type="rotate" from="0 19 19" to="360 19 19" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+    <div style="font-size:14px;color:#ea8500;letter-spacing:1px;margin-top:6px;">Yükleniyor...</div>
+  </div>
 
   <div class="cat">
     <div class="cat-title">Menü</div>
@@ -51,19 +65,19 @@
   <div class="contacts">
     <h2>İletişim ve Yorum</h2>
     <div class="social-links">
-  <a href="https://www.instagram.com/hardurum" class="ig" target="_blank" rel="noopener">
-    <svg width="19" height="19" viewBox="0 0 50 50"><circle cx="25" cy="25" r="24" fill="white"/><g><circle cx="25" cy="25" r="9" fill="#fff" stroke="#ea4c89" stroke-width="3"/><circle cx="38.5" cy="11.5" r="2.5" fill="#ea4c89"/></g></svg>
-    Instagram
-  </a>
-  <a href="https://share.google/Xx2qKnXvvq03BbWQn" class="gm" target="_blank" rel="noopener">
-    <svg width="19" height="19" viewBox="0 0 48 48">
-      <circle cx="24" cy="24" r="22" fill="#fff"/>
-      <path d="M24 10a10 10 0 0 1 10 10c0 7.5-10 18-10 18S14 27.5 14 20a10 10 0 0 1 10-10zm0 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="#4285F4"/>
-    </svg>
-    Google Yorum
-  </a>
-</div>
-
+      <a href="https://www.instagram.com/hardurum" class="ig" target="_blank" rel="noopener">
+        <svg width="19" height="19" viewBox="0 0 50 50"><circle cx="25" cy="25" r="24" fill="white"/><g><circle cx="25" cy="25" r="9" fill="#fff" stroke="#ea4c89" stroke-width="3"/><circle cx="38.5" cy="11.5" r="2.5" fill="#ea4c89"/></g></svg>
+        Instagram
+      </a>
+      <a href="https://share.google/Xx2qKnXvvq03BbWQn" class="gm" target="_blank" rel="noopener">
+        <!-- Google Yorum için düzgün SVG ikon -->
+        <svg width="19" height="19" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="22" fill="#fff"/>
+          <path d="M24 10a10 10 0 0 1 10 10c0 7.5-10 18-10 18S14 27.5 14 20a10 10 0 0 1 10-10zm0 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="#4285F4"/>
+        </svg>
+        Google Yorum
+      </a>
+    </div>
     <div class="address">
       <strong>Adres:</strong> Balmumcu Mah. Gazi Umur Paşa Sk. No: 4A Uğur Apt. Beşiktaş / İstanbul<br>
       <strong>Telefon:</strong> <a href="tel:05353240777" class="tel">0535 324 07 77</a>
@@ -76,8 +90,11 @@
 
 </div>
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxWoKKilCgwHv6GGAwCWLMjoMO4gFFaaPEYhhhXlUg7V78vV2YNk358SjOSkJcRtVPt/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxWoKKilCgwHv6GGAwCWLMjoMO4gFFaaPEYhhhXlUg7V78vV2YNk358SjOSkJcRtVPt/exec"; // Buraya Apps Script linkini yaz
 
+function showLoader(show=true){
+  document.getElementById("loader").style.display = show ? "block" : "none";
+}
 function renderMenu(data){
   const search = (document.getElementById("search").value||"").toLowerCase();
   const menu = document.getElementById("menu");
@@ -96,9 +113,17 @@ function renderMenu(data){
   });
 }
 function loadMenu(){
+  showLoader(true);
   fetch(API_URL)
     .then(r=>r.json())
-    .then(data=>renderMenu(data));
+    .then(data=>{
+      renderMenu(data);
+      showLoader(false);
+    })
+    .catch(_=>{
+      document.getElementById("menu").innerHTML = "<div style='color:#b00;font-size:15px;text-align:center'>Menü yüklenemedi. Lütfen daha sonra tekrar deneyin.</div>";
+      showLoader(false);
+    });
 }
 document.getElementById("search").oninput = loadMenu;
 loadMenu();
