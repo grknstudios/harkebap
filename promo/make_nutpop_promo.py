@@ -57,23 +57,30 @@ VO_LEAD = 0.3  # voice starts this long after a segment begins
 XF = 0.35      # transition length
 
 
-def build_timeline():
+def build_timeline(plan, min_len=2.6):
+    """plan: [(segment name, voice-over key, tail seconds after the voice)]."""
     segs = []
     t = 0.0
-    plan = [("grkn", "grkn", 0.7), ("intro", "intro", 0.55)]
-    plan += [(f"shot{i}", k, 0.55) for i, k in enumerate(SHOT_KEYS)]
-    plan += [("cta", "cta", 2.4)]
     for name, key, tail in plan:
-        d = VO_LEAD + vo_len(key) + tail
-        if name.startswith("shot"):
-            d = max(d, 2.6)
+        d = max(VO_LEAD + vo_len(key) + tail, min_len)
         segs.append({"name": name, "vo": key, "start": t, "end": t + d})
         t += d
     return segs, t
 
 
-SEGS, DURATION = build_timeline()
-NFRAMES = int(DURATION * FPS)
+def use_timeline(plan, vo_dir=None, min_len=2.6):
+    """Switch this module to another cut (used by the variant scripts)."""
+    global SEGS, DURATION, NFRAMES, VO_DIR
+    if vo_dir:
+        VO_DIR = vo_dir
+    SEGS, DURATION = build_timeline(plan, min_len)
+    NFRAMES = int(DURATION * FPS)
+
+
+MAIN_PLAN = ([("grkn", "grkn", 0.7), ("intro", "intro", 0.55)]
+             + [(f"shot{i}", k, 0.55) for i, k in enumerate(SHOT_KEYS)]
+             + [("cta", "cta", 2.4)])
+use_timeline(MAIN_PLAN)
 
 
 # ---------------------------------------------------------------- helpers
@@ -612,8 +619,9 @@ def make_audio(path):
         wf.writeframes((mix * 32767).astype(np.int16).tobytes())
 
 
-def main():
-    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "nutpop_promo_1080x1920.mp4")
+def main(out=None):
+    out = out or (sys.argv[1] if len(sys.argv) > 1
+                  else os.path.join(HERE, "nutpop_promo_1080x1920.mp4"))
     wav = out.rsplit(".", 1)[0] + "_audio.wav"
     for s in SEGS:
         print(f"{s['name']:>6}: {s['start']:6.2f} - {s['end']:6.2f}")
