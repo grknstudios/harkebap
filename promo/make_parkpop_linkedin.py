@@ -4,7 +4,7 @@
 Usage: python3 make_parkpop_linkedin.py [output.mp4]
 Needs assets/parkpop/vo_linkedin
 (python3 make_voiceover.py <model> <voices> parkpop_linkedin) and
-assets/parkpop/icon.png (the game icon with rounded corners).
+assets/parkpop/icon_source.png (the logo as supplied).
 Also writes a matching .srt caption file next to the video.
 """
 import glob
@@ -28,7 +28,7 @@ BLUE = ((48, 96, 226), (64, 112, 238))
 PINK = ((210, 60, 138), (222, 78, 154))
 
 L.APP_NAME = "Park Pop"
-L.BRAND_LOGO = os.path.join(PP, "icon.png")
+L.BRAND_LOGO = os.path.join(PP, "icon_source.png")
 L.BRAND_BG = BLUE
 L.HOOK_TEXT = ("STUCK IN TRAFFIC?", "TRY THIS JAM!")
 L.HOOK_NUTS = []
