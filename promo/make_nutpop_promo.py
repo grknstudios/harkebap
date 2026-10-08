@@ -228,11 +228,13 @@ def hex_nut(ci, size=200):
 
 @lru_cache(None)
 def soft_circle(r, color, alpha=255):
+    """Radial glow that fades to exactly zero at radius r (no square edge)."""
     s = r * 2
     img = Image.new("RGBA", (s, s), color + (0,))
-    m = Image.new("L", (s, s), 0)
-    ImageDraw.Draw(m).ellipse([r * 0.3, r * 0.3, s - r * 0.3, s - r * 0.3], fill=alpha)
-    img.putalpha(m.filter(ImageFilter.GaussianBlur(r * 0.3)))
+    yy, xx = np.mgrid[0:s, 0:s]
+    d = np.hypot(xx - r + 0.5, yy - r + 0.5) / r
+    a = alpha * np.exp(-(d / 0.5) ** 2) * np.clip(1 - d, 0, 1) ** 2
+    img.putalpha(Image.fromarray(a.astype(np.uint8)))
     return img
 
 
