@@ -64,6 +64,26 @@ VARIANTS = {
             "cta": "NutPop is out now on Google Play. Download it today!",
         },
     },
+    # LinkedIn landscape cut (make_nutpop_linkedin.py)
+    "linkedin": {
+        "dir": "vo_linkedin",
+        "voice": "af_heart",
+        "lang": "en-us",
+        "speed": 1.0,
+        "lines": {
+            "grkn": "G R K N Studios presents.",
+            "hook": "Need a five-minute break that actually clears your head? Meet NutPop.",
+            "play": "NutPop is a calm, satisfying puzzle. Tap a bolt, and stack the nuts by colour.",
+            "calm": "There's no timer, and no stress. Every single level is solvable.",
+            "fresh": "Ice, locks and bombs keep every level fresh, across twenty beautiful places.",
+            "rewards": "Collect nine nut sets, spin for daily rewards, and unlock a bonus puzzle "
+                       "every ten levels.",
+            "anywhere": "And with no WiFi needed, you can play anywhere: on your commute, "
+                        "or between meetings.",
+            "cta": "NutPop is out now on Google Play. Give your brain a break, "
+                   "and download it today!",
+        },
+    },
 }
 
 

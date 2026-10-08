@@ -493,6 +493,11 @@ def scaled(img, scale, angle=0.0, under=None):
     return out
 
 
+# transition into segment k is TRANSITIONS[k % len(TRANSITIONS)]
+TRANSITIONS = ["push_left", "punch", "push_up", "spin"]
+FADE_IN_COLOR = (0, 0, 0)
+
+
 def render_frame(fi):
     t = fi / FPS
     k = next(j for j, s in enumerate(SEGS) if t < s["end"] or j == len(SEGS) - 1)
@@ -502,29 +507,33 @@ def render_frame(fi):
     if k > 0 and lt < XF:
         prev = SCENE_FN[SEGS[k - 1]["name"]](t)
         e = ease_in_out(lt / XF)
-        kind = k % 4
-        if kind == 0:    # push left
+        kind = TRANSITIONS[k % len(TRANSITIONS)]
+        if kind == "fade":
+            img = Image.blend(prev, img, e)
+        elif kind == "push_left":
             out = Image.new("RGBA", (W, H))
             out.paste(prev, (int(-W * e), 0))
             out.paste(img, (int(W * (1 - e)), 0))
             img = out
-        elif kind == 1:  # zoom punch with flash
+        elif kind == "punch":  # zoom punch with flash
             img = Image.blend(prev, scaled(img, 1.25 - 0.25 * ease_out_cubic(lt / XF)), e)
             fl = int(170 * (1 - abs(lt / XF - 0.5) * 2))
             img.alpha_composite(Image.new("RGBA", (W, H), (255, 255, 255, max(0, fl))))
-        elif kind == 2:  # push up
+        elif kind == "push_up":
             out = Image.new("RGBA", (W, H))
             out.paste(prev, (0, int(-H * e)))
             out.paste(img, (0, int(H * (1 - e))))
             img = out
-        else:            # spin in over the darkened previous scene
+        else:  # "spin": spin in over the darkened previous scene
             dark = prev.copy()
             dark.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(160 * e))))
             q = ease_out_back(lt / XF, 1.2)
             img = scaled(img, 0.6 + 0.4 * q, 14 * (1 - q), under=dark)
-    fade = min(prog(t, 0, 0.3), 1 - prog(t, DURATION - 0.5, DURATION))
-    if fade < 1:
-        img.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(255 * (1 - fade)))))
+    fin, fout = prog(t, 0, 0.3), 1 - prog(t, DURATION - 0.5, DURATION)
+    if fin < 1:
+        img.alpha_composite(Image.new("RGBA", (W, H), FADE_IN_COLOR + (int(255 * (1 - fin)),)))
+    if fout < 1:
+        img.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(255 * (1 - fout)))))
     return img.convert("RGB").tobytes()
 
 
