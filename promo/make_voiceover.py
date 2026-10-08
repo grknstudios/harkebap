@@ -84,6 +84,28 @@ VARIANTS = {
                    "and download it today!",
         },
     },
+    # Park Pop LinkedIn landscape cut (make_parkpop_linkedin.py)
+    "parkpop_linkedin": {
+        "dir": "parkpop/vo_linkedin",
+        "voice": "af_heart",
+        "lang": "en-us",
+        "speed": 1.0,
+        "lines": {
+            "grkn": "G R K N Studios presents.",
+            "hook": "Stuck in traffic? Here's one jam you'll actually enjoy. Meet Park Pop.",
+            "play": "Park Pop is a colourful car parking puzzle. Tap a lane, drive the cars, "
+                    "and park them by colour.",
+            "calm": "There are no timers, and no lives. Every level is solvable, "
+                    "and one hundred percent fair.",
+            "fresh": "Ice, locks and bombs bring new twists, across four seasons "
+                     "and thirteen scenes.",
+            "rewards": "Collect twenty car sets, claim free daily rewards, and unlock "
+                       "a bonus escape puzzle every ten levels.",
+            "anywhere": "And with no WiFi needed, you can play anywhere: on your commute, "
+                        "or between meetings.",
+            "cta": "Park Pop is out now on Google Play. Clear the jam, and download it today!",
+        },
+    },
 }
 
 

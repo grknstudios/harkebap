@@ -39,6 +39,14 @@ P.use_timeline([("grkn", "grkn", 0.8), ("hook", "hook", 0.6), ("play", "play", 0
 
 PHONE_BOX = (233, 557, 847, 1896)  # phone mock-up inside the store screenshots
 
+# per-game settings (make_parkpop_linkedin.py overrides these)
+APP_NAME = "NutPop"
+BRAND_LOGO = os.path.join(P.ASSETS, "logo.png")
+BRAND_BG = PURPLE
+HOOK_TEXT = ("NEED A 5-MINUTE", "BRAIN BREAK?")
+CTA_SHOTS = [(SATISFYING, 1170, 560, 760, 7), (SORT, 1680, 560, 760, -7),
+             (NO_TIMER, 1425, 545, 840, 0)]
+
 
 # ---------------------------------------------------------------- sprites
 def with_shadow(spr, blur=26, offset=(0, 22), alpha=110):
@@ -95,7 +103,7 @@ def pill_left(img, text, x, y, size=34, alpha=1.0, dx=0):
 
 def corner_brand(img, t, lt):
     a = P.prog(lt, 0.3, 0.8)
-    logo = P.load_rgba(os.path.join(P.ASSETS, "logo.png"), 96, sharpen=True)
+    logo = P.load_rgba(BRAND_LOGO, 96, sharpen=True)
     P.paste_center(img, logo, 110, H - 85, 1.0, a)
     text_left(img, "Out now on Google Play", 175, H - 85, 30, path=P.FONT_BOLD, alpha=a * 0.95)
 
@@ -123,24 +131,24 @@ HOOK_NUTS = [(190, 190, 0, 0.75), (900, 150, 1, 0.6), (150, 880, 2, 0.7), (1010,
 def scene_hook(t):
     s = P.seg("hook")
     lt = t - s["start"]
-    img = P.background(t, PURPLE)
+    img = P.background(t, BRAND_BG)
     P.floating_nuts(img, t, s["start"] + 0.1, HOOK_NUTS)
     P.paste_center(img, P.soft_circle(360, (255, 230, 150), 120), 560, 520,
                    1 + 0.05 * math.sin(t * 4))
-    logo = P.load_rgba(os.path.join(P.ASSETS, "logo.png"), 470, sharpen=True)
+    logo = P.load_rgba(BRAND_LOGO, 470, sharpen=True)
     logo = P.shine(logo, P.prog(lt, 0.9, 1.7))
     p = P.prog(lt, 0.0, 0.6)
     P.paste_center(img, logo, 560, 520 + 10 * math.sin(lt * 2.2), P.ease_out_back(p, 2.0),
                    min(1, p * 3), (1 - P.ease_out_cubic(p)) * -20)
     q = P.prog(lt, 0.4, 0.8)
     rise = (1 - P.ease_out_cubic(q)) * 40
-    P.draw_text(img, "NEED A 5-MINUTE", 1330, 400 + rise, 84, stroke=10, shadow=8, alpha=q)
+    P.draw_text(img, HOOK_TEXT[0], 1330, 400 + rise, 84, stroke=10, shadow=8, alpha=q)
     q2 = P.prog(lt, 0.6, 1.0)
-    P.draw_text(img, "BRAIN BREAK?", 1330, 520 + (1 - P.ease_out_cubic(q2)) * 40, 128,
+    P.draw_text(img, HOOK_TEXT[1], 1330, 520 + (1 - P.ease_out_cubic(q2)) * 40, 128,
                 fill=P.PILL, stroke=12, shadow=10, alpha=q2)
-    tm = s["start"] + P.VO_LEAD + P.vo_len("hook") * 0.72  # "Meet NutPop"
+    tm = s["start"] + P.VO_LEAD + P.vo_len("hook") * 0.72  # "Meet <app>"
     m = P.prog(t, tm, tm + 0.35)
-    P.paste_center(img, P.pill_sprite("Meet NutPop →", 56), 1330, 690,
+    P.paste_center(img, P.pill_sprite(f"Meet {APP_NAME} →", 56), 1330, 690,
                    P.ease_out_back(m, 2.2), m)
     P.burst(img, t, tm, 560, 520, n=30, seed=7, power=1.1)
     return img
@@ -180,15 +188,14 @@ def feature(name, colors, kicker, headline, sub, shots):
 def scene_cta(t):
     s = P.seg("cta")
     lt = t - s["start"]
-    img = P.background(t, PURPLE)
-    shots = [(SATISFYING, 1170, 560, 760, 7), (SORT, 1680, 560, 760, -7), (NO_TIMER, 1425, 545, 840, 0)]
-    for j, (idx, cx, cy, h, ang) in enumerate(shots):
+    img = P.background(t, BRAND_BG)
+    for j, (idx, cx, cy, h, ang) in enumerate(CTA_SHOTS):
         q = P.ease_out_back(P.prog(lt, 0.25 + j * 0.12, 0.9 + j * 0.12), 1.3)
         P.paste_center(img, phone(idx, h), cx + (1 - q) * 900, cy + 10 * math.sin(t * 1.6 + j),
                        1.0, min(1, q * 2) if q > 0 else 0, ang)
     cx = 560
     P.paste_center(img, P.soft_circle(280, (255, 230, 150), 110), cx, 200, 1 + 0.05 * math.sin(t * 4))
-    logo = P.shine(P.load_rgba(os.path.join(P.ASSETS, "logo.png"), 330, sharpen=True),
+    logo = P.shine(P.load_rgba(BRAND_LOGO, 330, sharpen=True),
                    P.prog(lt, 0.7, 1.5))
     p = P.prog(lt, 0.0, 0.5)
     P.paste_center(img, logo, cx, 195 + 8 * math.sin(lt * 2.2), P.ease_out_back(p, 2.0), min(1, p * 3))
@@ -200,7 +207,7 @@ def scene_cta(t):
     pulse = 1 + 0.035 * math.sin(lt * 6) if b >= 1 else 1
     P.paste_center(img, P.badge(), cx, 690, 0.8 * P.ease_out_back(b) * pulse, b)
     sp = P.prog(lt, 1.0, 1.4)
-    P.draw_text(img, "Search “NutPop” on Google Play", cx, 815, 44, path=P.FONT_BOLD,
+    P.draw_text(img, f"Search “{APP_NAME}” on Google Play", cx, 815, 44, path=P.FONT_BOLD,
                 stroke=5, alpha=sp)
     P.draw_text(img, P.PLAY_URL, cx, 865, 26, path=P.FONT_SEMI, fill=(235, 225, 255), alpha=sp)
     g = P.prog(lt, 1.3, 1.8)
@@ -233,14 +240,14 @@ P.SCENE_FN.update({
 })
 
 
-def write_srt(path):
+def write_srt(path, lines=LINES):
     def ts(x):
         ms = int(round(x * 1000))
         return f"{ms // 3600000:02d}:{ms // 60000 % 60:02d}:{ms // 1000 % 60:02d},{ms % 1000:03d}"
     with open(path, "w") as f:
         for n, s in enumerate(P.SEGS, 1):
             a = s["start"] + P.VO_LEAD
-            text = LINES[s["vo"]].replace("G R K N", "GRKN")
+            text = lines[s["vo"]].replace("G R K N", "GRKN")
             f.write(f"{n}\n{ts(a)} --> {ts(a + P.vo_len(s['vo']))}\n{text}\n\n")
 
 
