@@ -61,7 +61,7 @@ def scene_hook(t):
     q2 = P.prog(lt, 0.6, 1.0)
     centered_text(img, L.HOOK_TEXT[1], 1205, 112, alpha=q2, dy=(1 - P.ease_out_cubic(q2)) * 40,
                   fill=P.PILL, stroke=12, shadow=10)
-    tm = s["start"] + P.VO_LEAD + P.vo_len("hook") * 0.72  # "Meet Park Pop"
+    tm = s["start"] + P.VO_LEAD + P.vo_len("hook") * L.MEET_AT  # "Meet Park Pop"
     m = P.prog(t, tm, tm + 0.35)
     P.paste_center(img, P.pill_sprite(f"Meet {L.APP_NAME} →", 60), W / 2, 1390,
                    P.ease_out_back(m, 2.2), m)

@@ -44,6 +44,7 @@ APP_NAME = "NutPop"
 BRAND_LOGO = os.path.join(P.ASSETS, "logo.png")
 BRAND_BG = PURPLE
 HOOK_TEXT = ("NEED A 5-MINUTE", "BRAIN BREAK?")
+MEET_AT = 0.72  # where "Meet <app>" falls in the hook line (fraction of its length)
 CTA_SHOTS = [(SATISFYING, 1170, 560, 760, 7), (SORT, 1680, 560, 760, -7),
              (NO_TIMER, 1425, 545, 840, 0)]
 
@@ -146,7 +147,7 @@ def scene_hook(t):
     q2 = P.prog(lt, 0.6, 1.0)
     P.draw_text(img, HOOK_TEXT[1], 1330, 520 + (1 - P.ease_out_cubic(q2)) * 40, 128,
                 fill=P.PILL, stroke=12, shadow=10, alpha=q2)
-    tm = s["start"] + P.VO_LEAD + P.vo_len("hook") * 0.72  # "Meet <app>"
+    tm = s["start"] + P.VO_LEAD + P.vo_len("hook") * MEET_AT  # "Meet <app>"
     m = P.prog(t, tm, tm + 0.35)
     P.paste_center(img, P.pill_sprite(f"Meet {APP_NAME} →", 56), 1330, 690,
                    P.ease_out_back(m, 2.2), m)

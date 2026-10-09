@@ -2,8 +2,9 @@
 """Park Pop LinkedIn cut: 1920x1080, same format as the NutPop LinkedIn video.
 
 Usage: python3 make_parkpop_linkedin.py [output.mp4]
-Needs assets/parkpop/vo_linkedin
-(python3 make_voiceover.py <model> <voices> parkpop_linkedin) and
+Voice-over: assets/parkpop/vo_elevenlabs, split from the ElevenLabs recording
+(assets/parkpop/elevenlabs_asher.mp3) with split_voiceover.py. The Kokoro set in
+assets/parkpop/vo_linkedin still works if vo_dir is pointed back at it. Also needs
 assets/parkpop/icon_source.png (the logo as supplied).
 Also writes a matching .srt caption file next to the video.
 """
@@ -31,6 +32,7 @@ L.APP_NAME = "Park Pop"
 L.BRAND_LOGO = os.path.join(PP, "icon_source.png")
 L.BRAND_BG = BLUE
 L.HOOK_TEXT = ("STUCK IN TRAFFIC?", "TRY THIS JAM!")
+L.MEET_AT = 0.77
 L.HOOK_NUTS = []
 L.PHONE_BOX = (231, 551, 849, 1889)
 L.CTA_SHOTS = [(SATISFYING, 1170, 560, 760, 7), (ICE, 1680, 560, 760, -7),
@@ -39,7 +41,7 @@ L.CTA_SHOTS = [(SATISFYING, 1170, 560, 760, 7), (ICE, 1680, 560, 760, -7),
 P.use_timeline([("grkn", "grkn", 0.8), ("hook", "hook", 0.6), ("play", "play", 0.5),
                 ("calm", "calm", 0.5), ("fresh", "fresh", 0.5), ("rewards", "rewards", 0.5),
                 ("anywhere", "anywhere", 0.5), ("cta", "cta", 3.0)],
-               vo_dir=os.path.join(PP, "vo_linkedin"), min_len=3.0)
+               vo_dir=os.path.join(PP, "vo_elevenlabs"), min_len=3.0)
 
 P.SCENE_FN.update({
     "play": L.feature("play", L.ORANGE, "SIMPLE TO PLAY", ["Tap. Drive.", "Park!"],
